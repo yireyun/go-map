@@ -38,6 +38,7 @@ const _BSZ = 8
 
 // Constants for multiples of sizeof(WORD)
 const (
+	_DSZ  = 2         // 2
 	_WSZ  = 4         // 4
 	_DWSZ = _WSZ << 1 // 8
 )
@@ -107,32 +108,48 @@ func (h *HashMap) Get(key []byte) interface{} {
 	// FIXME: Reorder on GET if chained?
 	// We unroll and optimize the comparison of keys.
 	for e != nil {
-		i, klen := 0, len(key)
+		klen := len(key)
+		p1 := uintptr(unsafe.Pointer(&key[0]))
+		p2 := uintptr(unsafe.Pointer(&e.key[0]))
 		if klen != len(e.key) || hk != e.hk {
 			goto next
 		}
 		// We unroll and optimize the key comparison here.
 		// Compare _DWSZ at a time
 		for ; klen >= _DWSZ; klen -= _DWSZ {
-			k1 := *(*uint64)(unsafe.Pointer(&key[i]))
-			k2 := *(*uint64)(unsafe.Pointer(&e.key[i]))
+			k1 := *(*uint64)(unsafe.Pointer(p1))
+			k2 := *(*uint64)(unsafe.Pointer(p2))
 			if k1 != k2 {
 				goto next
 			}
-			i += _DWSZ
+			p1 += _DWSZ
+			p2 += _DWSZ
 		}
 		// Check by _WSZ if applicable
 		if (klen & _WSZ) > 0 {
-			k1 := *(*uint32)(unsafe.Pointer(&key[i]))
-			k2 := *(*uint32)(unsafe.Pointer(&e.key[i]))
+			k1 := *(*uint32)(unsafe.Pointer(p1))
+			k2 := *(*uint32)(unsafe.Pointer(p1))
 			if k1 != k2 {
 				goto next
 			}
-			i += _WSZ
+			p1 += _WSZ
+			p2 += _WSZ
 		}
-		// Compare what is left over, byte by byte
-		for ; i < len(key); i++ {
-			if key[i] != e.key[i] {
+		// Check by _DSZ if applicable
+		if (klen & _DSZ) > 0 {
+			k1 := *(*uint16)(unsafe.Pointer(p1))
+			k2 := *(*uint16)(unsafe.Pointer(p1))
+			if k1 != k2 {
+				goto next
+			}
+			p1 += _DSZ
+			p2 += _DSZ
+		}
+		// Check by byte if applicable
+		if (klen & 1) > 0 {
+			k1 := *(*uint8)(unsafe.Pointer(p1))
+			k2 := *(*uint8)(unsafe.Pointer(p1))
+			if k1 != k2 {
 				goto next
 			}
 		}

@@ -401,7 +401,7 @@ func Benchmark_HashMap__GetLrgKey(b *testing.B) {
 	}
 }
 
-func Benchmark_GoMap_________Set(b *testing.B) {
+func Benchmark_GoMap__________Set(b *testing.B) {
 	b.StopTimer()
 	m := make(map[string][]byte)
 	size := 10000
@@ -421,9 +421,29 @@ func Benchmark_GoMap_________Set(b *testing.B) {
 	}
 }
 
-func Benchmark_HashMap_______Set(b *testing.B) {
+func Benchmark_HashMap________Set(b *testing.B) {
 	b.StopTimer()
 	m := NewHashMap()
+	size := 10000
+	keys := make([][]byte, size)
+	for i := 0; i < len(keys); i++ {
+		keys[i] = []byte(fmt.Sprintf("foo.%d", i))
+		m.Set(keys[i], bar)
+	}
+	Print(m)
+	b.StartTimer()
+
+	Grp := b.N / size
+	for g := 0; g < Grp; g++ {
+		for i := 0; i < size; i++ {
+			m.Set(keys[i], bar)
+		}
+	}
+}
+
+func Benchmark_HashMapWithBktsSet(b *testing.B) {
+	b.StopTimer()
+	m, _ := NewHashMapWithBkts(make([]*Entry, 16384))
 	size := 10000
 	keys := make([][]byte, size)
 	for i := 0; i < len(keys); i++ {
