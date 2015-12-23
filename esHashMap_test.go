@@ -283,10 +283,9 @@ func Print(m *HashMap) {
 	}
 	fmt.Printf("\t==> Size:%d, count:%d\n", len(m.bkts), cnt)
 }
-func Benchmark_GoMap___GetSmallKey(b *testing.B) {
+func benchmark_GoMap___GetSmallKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := make(map[string][]byte)
-	size := 10000
 	keys := make([]string, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = fmt.Sprintf("foo.%d", i)
@@ -303,10 +302,9 @@ func Benchmark_GoMap___GetSmallKey(b *testing.B) {
 	}
 }
 
-func Benchmark_HashMap_GetSmallKey(b *testing.B) {
+func benchmark_HashMap_GetSmallKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := NewHashMap()
-	size := 10000
 	keys := make([][]byte, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = []byte(fmt.Sprintf("foo.%d", i))
@@ -323,10 +321,9 @@ func Benchmark_HashMap_GetSmallKey(b *testing.B) {
 	}
 }
 
-func Benchmark_GoMap____GetMedKey(b *testing.B) {
+func benchmark_GoMap____GetMedKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := make(map[string][]byte)
-	size := 10000
 	keys := make([]string, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = fmt.Sprintf("%s.%d", med, i)
@@ -342,10 +339,9 @@ func Benchmark_GoMap____GetMedKey(b *testing.B) {
 	}
 }
 
-func Benchmark_HashMap__GetMedKey(b *testing.B) {
+func benchmark_HashMap__GetMedKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := NewHashMap()
-	size := 10000
 	keys := make([][]byte, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = []byte(fmt.Sprintf("foo.%d", i))
@@ -362,10 +358,9 @@ func Benchmark_HashMap__GetMedKey(b *testing.B) {
 	}
 }
 
-func Benchmark_GoMap____GetLrgKey(b *testing.B) {
+func benchmark_GoMap____GetLrgKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := make(map[string][]byte)
-	size := 10000
 	keys := make([]string, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = fmt.Sprintf("%s.%d", sub, i)
@@ -381,10 +376,9 @@ func Benchmark_GoMap____GetLrgKey(b *testing.B) {
 	}
 }
 
-func Benchmark_HashMap__GetLrgKey(b *testing.B) {
+func benchmark_HashMap__GetLrgKey(b *testing.B, size int) {
 	b.StopTimer()
 	m := NewHashMap()
-	size := 10000
 	keys := make([][]byte, size)
 	for i := 0; i < len(keys); i++ {
 		keys[i] = []byte(fmt.Sprintf("foo.%d", i))
@@ -399,6 +393,215 @@ func Benchmark_HashMap__GetLrgKey(b *testing.B) {
 			_ = m.Get(keys[i])
 		}
 	}
+}
+
+func Benchmark_GoMap___GetSmallKey___8(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 8)
+}
+func Benchmark_HashMap_GetSmallKey___8(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 8)
+}
+func Benchmark_GoMap____GetMedKey____8(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 8)
+}
+func Benchmark_HashMap__GetMedKey____8(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 8)
+}
+func Benchmark_GoMap____GetLrgKey____8(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 8)
+}
+func Benchmark_HashMap__GetLrgKey____8(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 8)
+}
+
+func Benchmark_GoMap___GetSmallKey_16(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 16)
+}
+func Benchmark_HashMap_GetSmallKey_16(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 16)
+}
+func Benchmark_GoMap____GetMedKey__16(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 16)
+}
+func Benchmark_HashMap__GetMedKey__16(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 16)
+}
+func Benchmark_GoMap____GetLrgKey__16(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 16)
+}
+func Benchmark_HashMap__GetLrgKey__16(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 16)
+}
+
+func Benchmark_GoMap___GetSmallKey__32(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 32)
+}
+func Benchmark_HashMap_GetSmallKey__32(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 32)
+}
+func Benchmark_GoMap____GetMedKey___32(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 32)
+}
+func Benchmark_HashMap__GetMedKey___32(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 32)
+}
+func Benchmark_GoMap____GetLrgKey___32(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 32)
+}
+func Benchmark_HashMap__GetLrgKey___32(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 32)
+}
+
+func Benchmark_GoMap___GetSmallKey_64(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 64)
+}
+func Benchmark_HashMap_GetSmallKey_64(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 64)
+}
+func Benchmark_GoMap____GetMedKey__64(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 64)
+}
+func Benchmark_HashMap__GetMedKey__64(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 64)
+}
+func Benchmark_GoMap____GetLrgKey__64(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 64)
+}
+func Benchmark_HashMap__GetLrgKey__64(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 64)
+}
+
+func Benchmark_GoMap___GetSmallKey_128(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 128)
+}
+func Benchmark_HashMap_GetSmallKey_128(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 128)
+}
+func Benchmark_GoMap____GetMedKey__128(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 128)
+}
+func Benchmark_HashMap__GetMedKey__128(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 128)
+}
+func Benchmark_GoMap____GetLrgKey__128(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 128)
+}
+func Benchmark_HashMap__GetLrgKey__128(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 128)
+}
+
+func Benchmark_GoMap___GetSmallKey__256(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 256)
+}
+func Benchmark_HashMap_GetSmallKey__256(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 256)
+}
+func Benchmark_GoMap____GetMedKey___256(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 256)
+}
+func Benchmark_HashMap__GetMedKey___256(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 256)
+}
+func Benchmark_GoMap____GetLrgKey___256(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 256)
+}
+func Benchmark_HashMap__GetLrgKey___256(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 256)
+}
+
+func Benchmark_GoMap___GetSmallKey_512(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 512)
+}
+func Benchmark_HashMap_GetSmallKey_512(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 512)
+}
+func Benchmark_GoMap____GetMedKey__512(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 512)
+}
+func Benchmark_HashMap__GetMedKey__512(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 512)
+}
+func Benchmark_GoMap____GetLrgKey__512(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 512)
+}
+func Benchmark_HashMap__GetLrgKey__512(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 512)
+}
+
+func Benchmark_GoMap___GetSmallKey_1024(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 1024)
+}
+func Benchmark_HashMap_GetSmallKey_1024(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 1024)
+}
+func Benchmark_GoMap____GetMedKey__1024(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 1024)
+}
+func Benchmark_HashMap__GetMedKey__1024(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 1024)
+}
+func Benchmark_GoMap____GetLrgKey__1024(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 1024)
+}
+func Benchmark_HashMap__GetLrgKey__1024(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 1024)
+}
+
+func Benchmark_GoMap___GetSmallKey__2048(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 2048)
+}
+func Benchmark_HashMap_GetSmallKey__2048(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 2048)
+}
+func Benchmark_GoMap____GetMedKey___2048(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 2048)
+}
+func Benchmark_HashMap__GetMedKey___2048(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 2048)
+}
+func Benchmark_GoMap____GetLrgKey___2048(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 2048)
+}
+func Benchmark_HashMap__GetLrgKey___2048(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 2048)
+}
+
+func Benchmark_GoMap___GetSmallKey_4096(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 4096)
+}
+func Benchmark_HashMap_GetSmallKey_4096(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 4096)
+}
+func Benchmark_GoMap____GetMedKey__4096(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 4096)
+}
+func Benchmark_HashMap__GetMedKey__4096(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 4096)
+}
+func Benchmark_GoMap____GetLrgKey__4096(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 4096)
+}
+func Benchmark_HashMap__GetLrgKey__4096(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 4096)
+}
+
+func Benchmark_GoMap___GetSmallKey__8192(b *testing.B) {
+	benchmark_GoMap___GetSmallKey(b, 8192)
+}
+func Benchmark_HashMap_GetSmallKey__8192(b *testing.B) {
+	benchmark_HashMap_GetSmallKey(b, 8192)
+}
+func Benchmark_GoMap____GetMedKey___8192(b *testing.B) {
+	benchmark_GoMap____GetMedKey(b, 8192)
+}
+func Benchmark_HashMap__GetMedKey___8192(b *testing.B) {
+	benchmark_HashMap__GetMedKey(b, 8192)
+}
+func Benchmark_GoMap____GetLrgKey___8192(b *testing.B) {
+	benchmark_GoMap____GetLrgKey(b, 8192)
+}
+func Benchmark_HashMap__GetLrgKey___8192(b *testing.B) {
+	benchmark_HashMap__GetLrgKey(b, 8192)
 }
 
 func Benchmark_GoMap__________Set(b *testing.B) {
