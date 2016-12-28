@@ -24,15 +24,6 @@ type HashMap struct {
 	rsz  bool
 }
 
-// Entry represents what the map is actually storing.
-// Uses simple linked list resolution for collisions.
-type Entry struct {
-	hk   uint32
-	key  []byte
-	data interface{}
-	next *Entry
-}
-
 // BucketSize, must be power of 2
 const _BSZ = 8
 
@@ -56,15 +47,14 @@ type Stats struct {
 }
 
 // NewWithBkts creates a new HashMap using the bkts slice argument.
-// len(bkts) must be a power of 2.
-func NewHashMapWithBkts(bkts []*Entry) (*HashMap, error) {
-	l := len(bkts)
-	if l == 0 || (l&(l-1) != 0) {
+// bkts must be a power of 2.
+func NewHashMapWithBkts(bkts int) (*HashMap, error) {
+	if bkts == 0 || (bkts&(bkts-1) != 0) {
 		return nil, errors.New("Size of buckets must be power of 2")
 	}
 	h := HashMap{}
-	h.msk = uint32(l - 1)
-	h.bkts = bkts
+	h.msk = uint32(bkts - 1)
+	h.bkts = make([]*Entry, bkts)
 	h.Hash = DefaultHash
 	h.rsz = true
 	return &h, nil
@@ -73,7 +63,7 @@ func NewHashMapWithBkts(bkts []*Entry) (*HashMap, error) {
 // New creates a new HashMap of default size and using the default
 // Hashing algorithm.
 func NewHashMap() *HashMap {
-	h, _ := NewHashMapWithBkts(make([]*Entry, _BSZ))
+	h, _ := NewHashMapWithBkts(_BSZ)
 	return h
 }
 
@@ -114,43 +104,45 @@ func (h *HashMap) Get(key []byte) interface{} {
 		if klen != len(e.key) || hk != e.hk {
 			goto next
 		}
-		// We unroll and optimize the key comparison here.
-		// Compare _DWSZ at a time
-		for ; klen >= _DWSZ; klen -= _DWSZ {
-			k1 := *(*uint64)(unsafe.Pointer(p1))
-			k2 := *(*uint64)(unsafe.Pointer(p2))
-			if k1 != k2 {
-				goto next
+		if p1 != p2 {
+			// We unroll and optimize the key comparison here.
+			// Compare _DWSZ at a time
+			for ; klen >= _DWSZ; klen -= _DWSZ {
+				k1 := *(*uint64)(unsafe.Pointer(p1))
+				k2 := *(*uint64)(unsafe.Pointer(p2))
+				if k1 != k2 {
+					goto next
+				}
+				p1 += _DWSZ
+				p2 += _DWSZ
 			}
-			p1 += _DWSZ
-			p2 += _DWSZ
-		}
-		// Check by _WSZ if applicable
-		if (klen & _WSZ) > 0 {
-			k1 := *(*uint32)(unsafe.Pointer(p1))
-			k2 := *(*uint32)(unsafe.Pointer(p1))
-			if k1 != k2 {
-				goto next
+			// Check by _WSZ if applicable
+			if (klen & _WSZ) > 0 {
+				k1 := *(*uint32)(unsafe.Pointer(p1))
+				k2 := *(*uint32)(unsafe.Pointer(p2))
+				if k1 != k2 {
+					goto next
+				}
+				p1 += _WSZ
+				p2 += _WSZ
 			}
-			p1 += _WSZ
-			p2 += _WSZ
-		}
-		// Check by _DSZ if applicable
-		if (klen & _DSZ) > 0 {
-			k1 := *(*uint16)(unsafe.Pointer(p1))
-			k2 := *(*uint16)(unsafe.Pointer(p1))
-			if k1 != k2 {
-				goto next
+			// Check by _DSZ if applicable
+			if (klen & _DSZ) > 0 {
+				k1 := *(*uint16)(unsafe.Pointer(p1))
+				k2 := *(*uint16)(unsafe.Pointer(p2))
+				if k1 != k2 {
+					goto next
+				}
+				p1 += _DSZ
+				p2 += _DSZ
 			}
-			p1 += _DSZ
-			p2 += _DSZ
-		}
-		// Check by byte if applicable
-		if (klen & 1) > 0 {
-			k1 := *(*uint8)(unsafe.Pointer(p1))
-			k2 := *(*uint8)(unsafe.Pointer(p1))
-			if k1 != k2 {
-				goto next
+			// Check by byte if applicable
+			if (klen & 1) > 0 {
+				k1 := *(*uint8)(unsafe.Pointer(p1))
+				k2 := *(*uint8)(unsafe.Pointer(p2))
+				if k1 != k2 {
+					goto next
+				}
 			}
 		}
 		// Success
@@ -172,7 +164,7 @@ func (h *HashMap) Remove(key []byte) {
 			h.used -= 1
 			// Check for resizing
 			lbkts := uint32(len(h.bkts))
-			if h.rsz && lbkts > _BSZ && (h.used < lbkts/4) {
+			if h.rsz && lbkts > _BSZ && (h.used < lbkts>>2) {
 				h.shrink()
 			}
 			return
@@ -209,7 +201,7 @@ func (h *HashMap) grow() {
 	if len(h.bkts) >= maxBktSize {
 		return
 	}
-	h.resize(uint32(2 * len(h.bkts)))
+	h.resize(uint32(len(h.bkts) << 1))
 }
 
 // shrink the HashMap's buckets by 2
@@ -217,7 +209,7 @@ func (h *HashMap) shrink() {
 	if len(h.bkts) <= _BSZ {
 		return
 	}
-	h.resize(uint32(len(h.bkts) / 2))
+	h.resize(uint32(len(h.bkts) >> 1))
 }
 
 // Count returns number of elements in the HashMap

@@ -10,15 +10,13 @@ import (
 )
 
 func TestMapWithBkts(t *testing.T) {
-	bkts := make([]*Entry, 3, 3)
-	_, err := NewHashMapWithBkts(bkts)
+	_, err := NewHashMapWithBkts(3)
 	if err == nil {
-		t.Fatalf("Buckets size of %d should have failed\n", len(bkts))
+		t.Fatalf("Buckets size of %d should have failed\n", 3)
 	}
-	bkts = make([]*Entry, 8, 8)
-	_, err = NewHashMapWithBkts(bkts)
+	_, err = NewHashMapWithBkts(8)
 	if err != nil {
-		t.Fatalf("Buckets size of %d should have succeeded\n", len(bkts))
+		t.Fatalf("Buckets size of %d should have succeeded\n", 8)
 	}
 }
 
@@ -646,7 +644,7 @@ func Benchmark_HashMap________Set(b *testing.B) {
 
 func Benchmark_HashMapWithBktsSet(b *testing.B) {
 	b.StopTimer()
-	m, _ := NewHashMapWithBkts(make([]*Entry, 16384))
+	m, _ := NewHashMapWithBkts(16384)
 	size := 10000
 	keys := make([][]byte, size)
 	for i := 0; i < len(keys); i++ {
